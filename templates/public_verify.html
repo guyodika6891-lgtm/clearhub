@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Verify Clearance · ClearHub</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    body { background: linear-gradient(135deg, #2563eb, #7c3aed); min-height: 100vh; display: flex; align-items: center; justify-content: center; font-family: Inter, system-ui, sans-serif; padding: 20px; }
+    .card-v { background: #fff; border-radius: 24px; max-width: 520px; width: 100%; padding: 40px; box-shadow: 0 40px 100px rgba(0,0,0,.3); }
+    .badge-ok { background: #10b981; color: #fff; padding: 8px 20px; border-radius: 40px; font-weight: 700; display: inline-block; }
+    .badge-no { background: #ef4444; color: #fff; padding: 8px 20px; border-radius: 40px; font-weight: 700; display: inline-block; }
+  </style>
+</head>
+<body>
+  <div class="card-v text-center">
+    <i class="bi bi-patch-check-fill" style="font-size:4rem;color:#2563eb;"></i>
+    <h2 class="fw-bold mt-3">Clearance Verification</h2>
+    <p class="text-muted small">Official verification from Werabe University</p>
+
+    {% if req and req.is_complete %}
+      <span class="badge-ok"><i class="bi bi-check-circle-fill"></i> VERIFIED COMPLETE</span>
+      <div class="text-start mt-4 p-3" style="background:#f8fafc;border-radius:12px;">
+        <div class="d-flex justify-content-between mb-2"><span class="text-muted small">Student</span><strong>{{ req.student.full_name or req.student.username }}</strong></div>
+        <div class="d-flex justify-content-between mb-2"><span class="text-muted small">Student ID</span><strong>{{ req.student.student_id or '—' }}</strong></div>
+        <div class="d-flex justify-content-between mb-2"><span class="text-muted small">Reference</span><strong>{{ req.reference }}</strong></div>
+        <div class="d-flex justify-content-between mb-2"><span class="text-muted small">Semester</span><strong>{{ req.semester.name }}</strong></div>
+        <div class="d-flex justify-content-between"><span class="text-muted small">Completed</span><strong>{{ req.completed_at.strftime("%B %d, %Y") if req.completed_at else '—' }}</strong></div>
+      </div>
+    {% elif req %}
+      <span class="badge-no"><i class="bi bi-x-circle-fill"></i> NOT YET COMPLETE</span>
+      <p class="mt-3 small text-muted">This clearance is currently <strong>{{ req.status }}</strong> ({{ req.progress }}% complete).</p>
+    {% else %}
+      <span class="badge-no"><i class="bi bi-question-circle-fill"></i> NOT FOUND</span>
+      <p class="mt-3 small text-muted">No clearance found for this reference.</p>
+    {% endif %}
+
+    <p class="text-muted small mt-4 mb-0">Werabe University · Werabe, Ethiopia</p>
+  </div>
+</body>
+</html>

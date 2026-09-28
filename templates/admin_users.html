@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}Users{% endblock %}
+{% block page_title %}Users{% endblock %}
+{% block page_sub %}{{ users|length }} shown{% endblock %}
+
+{% block content %}
+<form class="row g-2 mb-3">
+  <div class="col-md-4"><input class="form-control" name="q" value="{{ q }}" placeholder="Search..."></div>
+  <div class="col-md-3">
+    <select class="form-select" name="role">
+      <option value="">All roles</option>
+      <option value="admin" {% if role == 'admin' %}selected{% endif %}>Admin</option>
+      <option value="staff" {% if role == 'staff' %}selected{% endif %}>Staff</option>
+      <option value="student" {% if role == 'student' %}selected{% endif %}>Student</option>
+    </select>
+  </div>
+  <div class="col-md-2"><button class="btn btn-primary w-100">Filter</button></div>
+</form>
+
+<div class="p-card" style="padding:0; overflow:hidden;">
+  <table class="p-table">
+    <thead><tr><th>User</th><th>Email</th><th>Role</th><th>Department</th><th>Actions</th></tr></thead>
+    <tbody>
+      {% for u in users %}
+        <tr>
+          <td><strong>{{ u.full_name or u.username }}</strong><div class="small text-muted">{{ u.username }}</div></td>
+          <td class="small">{{ u.email }}</td>
+          <td>
+            <form method="post" action="{{ url_for('admin_set_role', user_id=u.id) }}" class="d-inline">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <select name="role" class="form-select form-select-sm" onchange="this.form.submit()" style="width:auto;display:inline-block;">
+                <option value="admin" {% if u.role == 'admin' %}selected{% endif %}>Admin</option>
+                <option value="staff" {% if u.role == 'staff' %}selected{% endif %}>Staff</option>
+                <option value="student" {% if u.role == 'student' %}selected{% endif %}>Student</option>
+              </select>
+            </form>
+          </td>
+          <td>
+            {% if u.role == 'staff' %}
+              <form method="post" action="{{ url_for('admin_set_department', user_id=u.id) }}" class="d-inline">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <select name="department_id" class="form-select form-select-sm" onchange="this.form.submit()" style="width:auto;display:inline-block;">
+                  <option value="">— None —</option>
+                  {% for d in departments %}
+                    <option value="{{ d.id }}" {% if u.department_id == d.id %}selected{% endif %}>{{ d.name }}</option>
+                  {% endfor %}
+                </select>
+              </form>
+            {% else %}—{% endif %}
+          </td>
+          <td>
+            {% if u.is_locked %}
+              <form method="post" action="{{ url_for('admin_unlock_user', user_id=u.id) }}" class="d-inline">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button class="btn btn-sm btn-outline-danger"><i class="bi bi-unlock"></i> Unlock</button>
+              </form>
+            {% else %}<span class="pill pill-success">OK</span>{% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

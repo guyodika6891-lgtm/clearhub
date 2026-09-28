@@ -1,0 +1,27 @@
+<div class="col-md-6 col-lg-4">
+  <a href="{{ url_for('clearance_detail', ref=r.reference) }}" class="text-decoration-none">
+    <div class="p-card h-100">
+      <div class="d-flex justify-content-between align-items-start mb-2">
+        <span class="pill
+          {% if r.status == 'completed' %}pill-success
+          {% elif r.status == 'rejected' %}pill-danger
+          {% elif r.status == 'in_progress' %}pill-brand
+          {% else %}pill-warning{% endif %}">
+          {% if r.status == 'completed' %}<i class="bi bi-check-circle-fill"></i> Completed
+          {% elif r.status == 'rejected' %}<i class="bi bi-x-circle-fill"></i> Rejected
+          {% else %}<i class="bi bi-hourglass-split"></i> {{ r.status|title }}{% endif %}
+        </span>
+        <span class="small text-muted">{{ r.created_at|time_ago }}</span>
+      </div>
+      <div class="fw-bold text-body mb-1">{{ r.semester.name }}</div>
+      <div class="small text-muted mb-3"><i class="bi bi-hash"></i> {{ r.reference }}</div>
+      <div class="p-progress mb-2">
+        <div class="p-progress-fill" style="width: {{ r.progress }}%"></div>
+      </div>
+      <div class="d-flex justify-content-between small text-muted">
+        <span>{{ r.approved_steps }}/{{ r.total_steps }} departments</span>
+        <strong>{{ r.progress }}%</strong>
+      </div>
+    </div>
+  </a>
+</div>

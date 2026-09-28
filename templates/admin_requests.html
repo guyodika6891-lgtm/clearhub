@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}All Requests{% endblock %}
+{% block page_title %}All Clearance Requests{% endblock %}
+
+{% block content %}
+<form class="row g-2 mb-3">
+  <div class="col-md-4"><input class="form-control" name="q" value="{{ q }}" placeholder="Search reference, name, ID..."></div>
+  <div class="col-md-3">
+    <select class="form-select" name="status">
+      <option value="">All statuses</option>
+      <option value="in_progress" {% if status == 'in_progress' %}selected{% endif %}>In Progress</option>
+      <option value="completed" {% if status == 'completed' %}selected{% endif %}>Completed</option>
+      <option value="rejected" {% if status == 'rejected' %}selected{% endif %}>Rejected</option>
+    </select>
+  </div>
+  <div class="col-md-2"><button class="btn btn-primary w-100">Filter</button></div>
+</form>
+
+<div class="p-card" style="padding:0; overflow:hidden;">
+  <table class="p-table">
+    <thead><tr><th>Reference</th><th>Student</th><th>Semester</th><th>Progress</th><th>Status</th></tr></thead>
+    <tbody>
+      {% for r in requests %}
+        <tr>
+          <td><a href="{{ url_for('clearance_detail', ref=r.reference) }}">{{ r.reference }}</a></td>
+          <td class="small">{{ r.student.full_name or r.student.username }}</td>
+          <td class="small text-muted">{{ r.semester.name }}</td>
+          <td>
+            <div class="p-progress" style="min-width:100px;">
+              <div class="p-progress-fill" style="width: {{ r.progress }}%"></div>
+            </div>
+            <small class="text-muted">{{ r.progress }}%</small>
+          </td>
+          <td>
+            <span class="pill
+              {% if r.status == 'completed' %}pill-success
+              {% elif r.status == 'rejected' %}pill-danger
+              {% else %}pill-brand{% endif %}">
+              {{ r.status|title }}
+            </span>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

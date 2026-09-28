@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Departments{% endblock %}
+{% block page_title %}Departments{% endblock %}
+{% block page_sub %}{{ departments|length }} total{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-end mb-3">
+  <a href="{{ url_for('admin_department_new') }}" class="btn btn-primary btn-sm"><i class="bi bi-plus-lg"></i> New Department</a>
+</div>
+
+<div class="p-card" style="padding: 12px;">
+  {% for d in departments %}
+    <div class="list-row">
+      <div class="list-thumb"
+           style="{% if d.is_active %}background:linear-gradient(135deg,#2563eb,#7c3aed);{% else %}background:linear-gradient(135deg,#94a3b8,#64748b);{% endif %}">
+        {{ d.code }}
+      </div>
+      <div class="list-body">
+        <div class="list-title">{{ d.name }}</div>
+        <div class="list-meta">
+          <span>Order #{{ d.order_index }}</span>
+          {% if d.is_optional %}<span class="pill pill-warning">Optional</span>{% endif %}
+          {% if d.is_active %}<span class="pill pill-success">Active</span>{% else %}<span class="pill pill-neutral">Inactive</span>{% endif %}
+          <span>{{ d.pending_count }} pending</span>
+        </div>
+      </div>
+      <div class="btn-group">
+        <a href="{{ url_for('admin_department_edit', dept_id=d.id) }}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a>
+        <form method="post" action="{{ url_for('admin_department_toggle', dept_id=d.id) }}" class="d-inline">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button class="btn btn-sm btn-outline-primary"><i class="bi bi-{% if d.is_active %}pause{% else %}play{% endif %}-fill"></i></button>
+        </form>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+{% endblock %}

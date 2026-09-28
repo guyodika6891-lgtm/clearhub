@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}Analytics{% endblock %}
+{% block page_title %}Analytics{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+  <div class="col-lg-8">
+    <div class="p-card">
+      <h6 class="p-card-title mb-2">Requests (Last 30 days)</h6>
+      <canvas id="reqChart" height="90"></canvas>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="p-card">
+      <h6 class="p-card-title mb-2">Status Breakdown</h6>
+      <canvas id="statusChart" height="220"></canvas>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4 mt-3">
+  <div class="col-12">
+    <div class="p-card">
+      <h6 class="p-card-title mb-3">Department Average Processing Time (hours)</h6>
+      <div class="row g-3">
+        {% for item in dept_times %}
+          <div class="col-md-3">
+            <div class="stat-tile" style="--tile-color:#2563eb;--tile-color-2:#7c3aed;">
+              <div class="tile-value" style="font-size:1.5rem;">{{ item.avg_hours }}h</div>
+              <div class="tile-label">{{ item.dept.name }}</div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+const gradient = (ctx) => {
+  const g = ctx.createLinearGradient(0, 0, 0, 300);
+  g.addColorStop(0, 'rgba(37,99,235,.35)');
+  g.addColorStop(1, 'rgba(37,99,235,0)');
+  return g;
+};
+const rCtx = document.getElementById('reqChart').getContext('2d');
+new Chart(rCtx, {
+  type: 'line',
+  data: {
+    labels: {{ days|tojson }},
+    datasets: [{
+      data: {{ counts|tojson }},
+      borderColor: '#2563eb',
+      borderWidth: 3,
+      backgroundColor: gradient(rCtx),
+      fill: true,
+      tension: .4,
+      pointRadius: 3,
+    }]
+  },
+  options: { responsive: true, plugins: { legend: { display: false } } }
+});
+
+new Chart(document.getElementById('statusChart'), {
+  type: 'doughnut',
+  data: {
+    labels: {{ status_counts.keys()|list|tojson }},
+    datasets: [{
+      data: {{ status_counts.values()|list|tojson }},
+      backgroundColor: ['#2563eb','#8b5cf6','#f59e0b','#ef4444','#10b981'],
+      borderWidth: 0,
+    }]
+  },
+  options: { responsive: true, cutout: '65%' }
+});
+</script>
+{% endblock %}

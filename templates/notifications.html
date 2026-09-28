@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Notifications{% endblock %}
+{% block page_title %}Notifications{% endblock %}
+
+{% block content %}
+{% if notifications %}
+  <div class="p-card" style="padding: 12px;">
+    {% for n in notifications %}
+      <div class="list-row" {% if not n.is_read %}style="background: rgba(37,99,235,.06);"{% endif %}>
+        <div class="list-thumb" style="background:linear-gradient(135deg,#2563eb,#7c3aed);"><i class="bi bi-bell-fill"></i></div>
+        <div class="list-body">
+          <div class="list-title">{{ n.message }}</div>
+          <div class="list-meta">{{ n.created_at|time_ago }}</div>
+        </div>
+        {% if n.url %}<a href="{{ n.url }}" class="btn btn-sm btn-outline-primary">Open</a>{% endif %}
+      </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="empty-state">
+    <div class="empty-icon"><i class="bi bi-bell-slash"></i></div>
+    <h5>No notifications</h5>
+    <p>You're all caught up!</p>
+  </div>
+{% endif %}
+{% endblock %}

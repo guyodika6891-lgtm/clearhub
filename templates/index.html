@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% block title %}Welcome{% endblock %}
+{% block content_public %}
+
+<section class="hero-lms text-white mb-5">
+  <div class="particles">
+    <div class="particle p1"></div>
+    <div class="particle p2"></div>
+    <div class="particle p3"></div>
+    <div class="particle p4"></div>
+  </div>
+  <div class="hero-inner container">
+    <div class="row align-items-center">
+      <div class="col-lg-8">
+        <span class="badge bg-warning text-dark mb-3 px-3 py-2">
+          <i class="bi bi-stars"></i> Digital Clearance System
+        </span>
+        <h1 class="mb-3">
+          Graduate smoothly.<br>
+          <span class="gradient-text">Clear digitally.</span>
+        </h1>
+        <p class="lead mb-4">
+          {{ config.UNIVERSITY_NAME }}'s modern clearance platform with
+          {{ dept_count }} departments — no more walking between offices.
+        </p>
+        <div class="d-flex flex-wrap gap-2">
+          <a href="{{ url_for('register') }}" class="btn btn-warning btn-lg fw-bold">
+            <i class="bi bi-rocket-takeoff"></i> Get Started
+          </a>
+          <a href="{{ url_for('login') }}" class="btn btn-outline-light btn-lg fw-bold">
+            <i class="bi bi-box-arrow-in-right"></i> Login
+          </a>
+        </div>
+
+        <div class="row g-4 mt-5">
+          <div class="col-4">
+            <div class="fs-3 fw-bold"><span class="counter" data-target="{{ dept_count }}">0</span></div>
+            <div class="small opacity-75">Departments</div>
+          </div>
+          <div class="col-4">
+            <div class="fs-3 fw-bold"><span class="counter" data-target="24" data-suffix="h">0</span></div>
+            <div class="small opacity-75">Avg. Clearance</div>
+          </div>
+          <div class="col-4">
+            <div class="fs-3 fw-bold"><span class="counter" data-target="100" data-suffix="%">0</span></div>
+            <div class="small opacity-75">Digital</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="container pb-5">
+  <div class="text-center mb-5 reveal">
+    <span class="badge bg-primary-subtle text-primary mb-2">How it works</span>
+    <h2 class="fw-bold">From application to certificate in 4 steps</h2>
+    <p class="text-muted">Clearance that used to take weeks — now takes hours</p>
+  </div>
+
+  <div class="row g-4 stagger">
+    <div class="col-md-3">
+      <div class="p-card h-100 text-center">
+        <div class="fs-1 text-primary mb-3"><i class="bi bi-1-circle-fill"></i></div>
+        <h6 class="fw-bold">Apply Online</h6>
+        <p class="small text-muted mb-0">Submit your clearance request in seconds</p>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="p-card h-100 text-center">
+        <div class="fs-1 text-primary mb-3"><i class="bi bi-2-circle-fill"></i></div>
+        <h6 class="fw-bold">Departments Review</h6>
+        <p class="small text-muted mb-0">Each department approves digitally</p>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="p-card h-100 text-center">
+        <div class="fs-1 text-primary mb-3"><i class="bi bi-3-circle-fill"></i></div>
+        <h6 class="fw-bold">Track Progress</h6>
+        <p class="small text-muted mb-0">See real-time status of every step</p>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="p-card h-100 text-center">
+        <div class="fs-1 text-primary mb-3"><i class="bi bi-4-circle-fill"></i></div>
+        <h6 class="fw-bold">Get Certificate</h6>
+        <p class="small text-muted mb-0">Download PDF when complete</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="text-center my-5 reveal">
+    <span class="badge bg-primary-subtle text-primary mb-2">All departments covered</span>
+    <h2 class="fw-bold">One platform. Every office.</h2>
+  </div>
+
+  <div class="row g-3 reveal">
+    {% set depts = [
+      ('bi-book', 'Library'),
+      ('bi-cash-coin', 'Finance'),
+      ('bi-house-door', 'Dormitory'),
+      ('bi-cup-hot', 'Cafeteria'),
+      ('bi-hospital', 'Hospital'),
+      ('bi-shield-shaded', 'Security'),
+      ('bi-pc-display', 'ICT Center'),
+      ('bi-trophy', 'Sports'),
+      ('bi-people', 'Student Union'),
+      ('bi-clipboard-check', 'Registrar'),
+      ('bi-flask', 'Laboratory'),
+      ('bi-mortarboard', 'Academic Dept')
+    ] %}
+    {% for icon, name in depts %}
+      <div class="col-6 col-md-3 col-lg-2">
+        <div class="p-card text-center py-3">
+          <i class="bi {{ icon }} fs-3 text-primary d-block mb-2"></i>
+          <div class="small fw-semibold">{{ name }}</div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <div class="p-card text-center mt-5 reveal" style="background: linear-gradient(135deg, #2563eb, #7c3aed); color: #fff; border: none;">
+    <h3 class="fw-bold mb-2">Ready to clear digitally?</h3>
+    <p class="opacity-75 mb-3">Start your clearance request today.</p>
+    <a href="{{ url_for('register') }}" class="btn btn-warning fw-bold">
+      <i class="bi bi-rocket-takeoff"></i> Get Started Free
+    </a>
+  </div>
+</div>
+
+{% endblock %}

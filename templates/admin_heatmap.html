@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Heatmap{% endblock %}
+{% block page_title %}Department Heatmap{% endblock %}
+{% block page_sub %}Performance across all departments{% endblock %}
+
+{% block content %}
+<div class="p-card">
+  <div class="table-responsive">
+    <table class="p-table">
+      <thead>
+        <tr>
+          <th>Department</th>
+          <th>Pending</th>
+          <th>Avg Wait (days)</th>
+          <th>Approved</th>
+          <th>Avg Approval (days)</th>
+          <th>Load</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in bottlenecks %}
+          <tr>
+            <td><strong>{{ item.dept.name }}</strong></td>
+            <td>{{ item.pending }}</td>
+            <td>
+              <span class="pill
+                {% if item.avg_pending_days > 7 %}pill-danger
+                {% elif item.avg_pending_days > 3 %}pill-warning
+                {% else %}pill-success{% endif %}">
+                {{ item.avg_pending_days }} days
+              </span>
+            </td>
+            <td>{{ item.approved }}</td>
+            <td>{{ item.avg_approval_days }} days</td>
+            <td>
+              <div class="p-progress" style="width:120px;">
+                <div class="p-progress-fill" style="width:{% if item.pending > 20 %}100{% else %}{{ item.pending * 5 }}{% endif %}%;background:{% if item.pending > 20 %}#ef4444{% elif item.pending > 10 %}#f59e0b{% else %}#10b981{% endif %};"></div>
+              </div>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

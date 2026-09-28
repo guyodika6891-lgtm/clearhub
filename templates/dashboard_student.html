@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Student Dashboard{% endblock %}
+{% block page_title %}Hello, {{ current_user.full_name or current_user.username }} 👋{% endblock %}
+{% block page_sub %}Track your clearance requests{% endblock %}
+
+{% block content %}
+<div class="stat-grid">
+  <div class="stat-tile fade-up" style="--tile-color:#2563eb;--tile-color-2:#7c3aed;">
+    <div class="tile-top"><div class="tile-icon"><i class="bi bi-files"></i></div></div>
+    <div class="tile-value">{{ requests|length }}</div>
+    <div class="tile-label">Total Requests</div>
+  </div>
+  <div class="stat-tile fade-up-1" style="--tile-color:#f59e0b;--tile-color-2:#d97706;">
+    <div class="tile-top"><div class="tile-icon"><i class="bi bi-hourglass-split"></i></div></div>
+    <div class="tile-value">{{ 1 if active else 0 }}</div>
+    <div class="tile-label">Active</div>
+  </div>
+  <div class="stat-tile fade-up-2" style="--tile-color:#10b981;--tile-color-2:#059669;">
+    <div class="tile-top"><div class="tile-icon"><i class="bi bi-check-circle-fill"></i></div></div>
+    <div class="tile-value">{{ completed|length }}</div>
+    <div class="tile-label">Completed</div>
+  </div>
+  <div class="stat-tile fade-up-3" style="--tile-color:#8b5cf6;--tile-color-2:#7c3aed;">
+    <div class="tile-top"><div class="tile-icon"><i class="bi bi-award-fill"></i></div></div>
+    <div class="tile-value" style="font-size:1.2rem;">{{ current_user.student_id or '—' }}</div>
+    <div class="tile-label">Your Student ID</div>
+  </div>
+</div>
+
+{% if active %}
+<div class="p-card mb-4 fade-up-1" style="border-left: 4px solid var(--brand);">
+  <div class="p-card-header">
+    <div>
+      <h6 class="p-card-title">⚡ Active Clearance</h6>
+      <p class="p-card-subtitle">{{ active.reference }} · {{ active.semester.name }}</p>
+    </div>
+    <span class="pill pill-brand">{{ active.progress }}%</span>
+  </div>
+  <div class="p-progress mb-3"><div class="p-progress-fill" style="width: {{ active.progress }}%"></div></div>
+  <div class="d-flex gap-2 flex-wrap">
+    <a href="{{ url_for('clearance_detail', ref=active.reference) }}" class="btn btn-primary btn-sm">
+      <i class="bi bi-eye"></i> View Details
+    </a>
+    {% if active.current_step %}
+      <span class="small text-muted align-self-center">
+        <i class="bi bi-arrow-right-circle"></i> Waiting on: <strong>{{ active.current_step.department.name }}</strong>
+      </span>
+    {% endif %}
+  </div>
+</div>
+{% else %}
+<div class="p-card mb-4 text-center fade-up-1">
+  <div class="empty-state">
+    <div class="empty-icon"><i class="bi bi-clipboard-check"></i></div>
+    <h5>No active clearance</h5>
+    <p>Start your clearance journey by submitting a new request.</p>
+    <a href="{{ url_for('clearance_apply') }}" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Apply Now</a>
+  </div>
+</div>
+{% endif %}
+
+{% if requests %}
+<div class="section-hd"><h5><i class="bi bi-clock-history text-primary"></i> All Requests</h5></div>
+<div class="row g-3">
+  {% for r in requests %}{% include "partials/_clearance_card.html" %}{% endfor %}
+</div>
+{% endif %}
+{% endblock %}

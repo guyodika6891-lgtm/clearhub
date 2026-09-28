@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+{% block title %}Clearance {{ req.reference }}{% endblock %}
+{% block page_title %}Clearance Request{% endblock %}
+{% block page_sub %}{{ req.reference }} · {{ req.semester.name }}{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+  <div class="col-lg-8">
+    <div class="p-card mb-3">
+      <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+        <div>
+          <h6 class="p-card-title mb-1">Student</h6>
+          <div>{{ req.student.full_name or req.student.username }}</div>
+          <div class="small text-muted">ID: {{ req.student.student_id or '—' }}</div>
+        </div>
+        <span class="pill
+          {% if req.status == 'completed' %}pill-success
+          {% elif req.status == 'rejected' %}pill-danger
+          {% else %}pill-brand{% endif %}">
+          {{ req.status|upper }}
+        </span>
+      </div>
+      <div class="p-progress mb-2">
+        <div class="p-progress-fill" style="width: {{ req.progress }}%"></div>
+      </div>
+      <div class="small text-muted">{{ req.progress }}% complete · {{ req.approved_steps }}/{{ req.total_steps }} approved</div>
+
+      {% if req.reason %}
+        <div class="mt-3 p-3" style="background: var(--surface-3); border-radius: 12px;">
+          <strong class="small">Reason:</strong>
+          <div class="small">{{ req.reason }}</div>
+        </div>
+      {% endif %}
+
+      <div class="d-flex gap-2 mt-3 flex-wrap align-items-center">
+        <a href="{{ url_for('request_chat', ref=req.reference) }}" class="btn btn-primary btn-sm">
+          <i class="bi bi-chat-dots"></i> Chat
+        </a>
+        <a href="{{ url_for('public_verify', ref=req.reference) }}" class="btn btn-outline-primary btn-sm" target="_blank">
+          <i class="bi bi-qr-code"></i> Public Verify
+        </a>
+        <img src="{{ url_for('qr_png', ref=req.reference) }}" alt="QR"
+             style="width:60px;height:60px;border-radius:8px;border:1px solid var(--border);">
+      </div>
+    </div>
+
+    <div class="p-card">
+      <h6 class="p-card-title mb-3"><i class="bi bi-list-check"></i> Department Approvals</h6>
+      {% for step in steps %}
+        <div class="list-row">
+          <div class="list-thumb"
+               style="{% if step.status == 'approved' %}background:linear-gradient(135deg,#10b981,#059669);
+                      {% elif step.status == 'rejected' %}background:linear-gradient(135deg,#ef4444,#dc2626);
+                      {% else %}background:linear-gradient(135deg,#94a3b8,#64748b);{% endif %}">
+            {% if step.status == 'approved' %}<i class="bi bi-check-lg"></i>
+            {% elif step.status == 'rejected' %}<i class="bi bi-x-lg"></i>
+            {% else %}<i class="bi bi-clock"></i>{% endif %}
+          </div>
+          <div class="list-body">
+            <div class="list-title">{{ step.department.name }}</div>
+            <div class="list-meta">
+              <span>{{ step.department.code }}</span>
+              {% if step.reviewed_at %}<span><i class="bi bi-clock"></i> {{ step.reviewed_at|time_ago }}</span>{% endif %}
+            </div>
+            {% if step.comment %}
+              <div class="small mt-1" style="color: var(--text-muted);">
+                <i class="bi bi-chat-left-text"></i> {{ step.comment }}
+              </div>
+            {% endif %}
+          </div>
+          <span class="pill
+            {% if step.status == 'approved' %}pill-success
+            {% elif step.status == 'rejected' %}pill-danger
+            {% else %}pill-neutral{% endif %}">
+            {{ step.status|title }}
+          </span>
+        </div>
+      {% endfor %}
+    </div>
+
+    {% if req.is_complete %}
+      <div class="p-card mt-3 text-center" style="border-left: 4px solid #10b981;">
+        <h6 class="text-success mb-2"><i class="bi bi-check-circle-fill"></i> Clearance Complete!</h6>
+        <p class="small text-muted mb-3">All departments have approved your request.</p>
+        <a href="{{ url_for('clearance_certificate', ref=req.reference) }}" class="btn btn-success">
+          <i class="bi bi-award"></i> View Certificate
+        </a>
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="col-lg-4">
+    <div class="p-card">
+      <h6 class="p-card-title mb-3"><i class="bi bi-info-circle"></i> Details</h6>
+      <div class="d-flex flex-column gap-2 small">
+        <div class="d-flex justify-content-between"><span class="text-muted">Reference</span><strong>{{ req.reference }}</strong></div>
+        <div class="d-flex justify-content-between"><span class="text-muted">Semester</span><strong>{{ req.semester.name }}</strong></div>
+        <div class="d-flex justify-content-between"><span class="text-muted">Created</span><strong>{{ req.created_at.strftime("%b %d, %Y") }}</strong></div>
+        {% if req.completed_at %}
+          <div class="d-flex justify-content-between"><span class="text-muted">Completed</span><strong>{{ req.completed_at.strftime("%b %d, %Y") }}</strong></div>
+        {% endif %}
+      </div>
+    </div>
+
+    {% if current_user.is_student and req.student_id == current_user.id and not req.is_complete %}
+      <div class="p-card mt-3">
+        <h6 class="p-card-title mb-3"><i class="bi bi-paperclip"></i> Upload Documents</h6>
+        <form method="post" enctype="multipart/form-data" action="{{ url_for('clearance_upload_document', ref=req.reference) }}">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <input type="file" name="file" class="form-control mb-2" accept=".pdf,.png,.jpg,.jpeg" required>
+          <button class="btn btn-primary btn-sm w-100"><i class="bi bi-upload"></i> Upload</button>
+        </form>
+        {% if req.documents.count() > 0 %}
+          <hr>
+          <div class="small fw-semibold mb-2">Uploaded:</div>
+          {% for d in req.documents %}
+            <div class="d-flex justify-content-between small mb-1">
+              <a href="{{ d.url }}" target="_blank" class="text-truncate" style="max-width:200px;">
+                <i class="bi bi-file-earmark"></i> {{ d.original_name or d.filename }}
+              </a>
+              <span class="text-muted">{{ d.uploaded_at|time_ago }}</span>
+            </div>
+          {% endfor %}
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

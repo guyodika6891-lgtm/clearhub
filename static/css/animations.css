@@ -1,0 +1,97 @@
+/* ==========================================================
+   ClearHub — Animations
+   ========================================================== */
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+@keyframes pulseGlow {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: .6; transform: scale(1.15); }
+}
+@keyframes bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeInLeft {
+  from { opacity: 0; transform: translateX(-30px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(120%); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes slideOutRight {
+  from { opacity: 1; transform: translateX(0); }
+  to { opacity: 0; transform: translateX(120%); }
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0) translateX(0) scale(1); opacity: .3; }
+  25% { transform: translateY(-30px) translateX(15px) scale(1.15); opacity: .6; }
+  50% { transform: translateY(-15px) translateX(-15px) scale(.9); opacity: .4; }
+  75% { transform: translateY(-40px) translateX(8px) scale(1.08); opacity: .7; }
+}
+@keyframes popIn {
+  0% { opacity: 0; transform: scale(.6); }
+  70% { transform: scale(1.05); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+.fade-up { animation: fadeInUp .5s ease-out both; }
+.fade-up-1 { animation: fadeInUp .5s .05s ease-out both; }
+.fade-up-2 { animation: fadeInUp .5s .1s ease-out both; }
+.fade-up-3 { animation: fadeInUp .5s .15s ease-out both; }
+
+.sidebar { animation: fadeInLeft .5s ease-out both; }
+.topbar { animation: fadeInUp .5s ease-out both; }
+.page-content > * { animation: fadeInUp .6s ease-out both; }
+.page-content > *:nth-child(1) { animation-delay: .05s; }
+.page-content > *:nth-child(2) { animation-delay: .1s; }
+.page-content > *:nth-child(3) { animation-delay: .15s; }
+.page-content > *:nth-child(4) { animation-delay: .2s; }
+
+.stat-tile { animation: fadeInUp .6s ease-out both; }
+.stat-tile:nth-child(1) { animation-delay: .05s; }
+.stat-tile:nth-child(2) { animation-delay: .12s; }
+.stat-tile:nth-child(3) { animation-delay: .19s; }
+.stat-tile:nth-child(4) { animation-delay: .26s; }
+.stat-tile:nth-child(5) { animation-delay: .33s; }
+.stat-tile:nth-child(6) { animation-delay: .40s; }
+
+#toast-container .alert { animation: slideInRight .5s cubic-bezier(.34,1.56,.64,1) both; }
+
+.particles { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.particle {
+  position: absolute; border-radius: 50%;
+  background: rgba(255,255,255,.15);
+  backdrop-filter: blur(2px);
+  animation: float 9s ease-in-out infinite;
+}
+.particle.p1 { width: 70px; height: 70px; top: 15%; left: 8%; animation-delay: 0s; }
+.particle.p2 { width: 45px; height: 45px; top: 60%; right: 12%; animation-delay: 1.8s; }
+.particle.p3 { width: 90px; height: 90px; bottom: 10%; left: 22%; animation-delay: 3.6s; }
+.particle.p4 { width: 35px; height: 35px; top: 28%; right: 28%; animation-delay: 5.4s; }
+
+.reveal { opacity: 0; transform: translateY(40px); transition: opacity .8s ease, transform .8s ease; }
+.reveal.reveal-in { opacity: 1; transform: translateY(0); }
+
+.stagger > * {
+  opacity: 0; transform: translateY(30px);
+  transition: all .7s cubic-bezier(.4,0,.2,1);
+}
+.stagger.reveal-in > * { opacity: 1; transform: translateY(0); }
+.stagger.reveal-in > *:nth-child(1) { transition-delay: .05s; }
+.stagger.reveal-in > *:nth-child(2) { transition-delay: .12s; }
+.stagger.reveal-in > *:nth-child(3) { transition-delay: .19s; }
+.stagger.reveal-in > *:nth-child(4) { transition-delay: .26s; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+  }
+}

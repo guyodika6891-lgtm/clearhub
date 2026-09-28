@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Semesters{% endblock %}
+{% block page_title %}Semesters{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-end mb-3">
+  <a href="{{ url_for('admin_semester_new') }}" class="btn btn-primary btn-sm"><i class="bi bi-plus-lg"></i> New Semester</a>
+</div>
+<div class="p-card" style="padding: 12px;">
+  {% for s in semesters %}
+    <div class="list-row">
+      <div class="list-thumb" style="background:linear-gradient(135deg,#f59e0b,#d97706);"><i class="bi bi-calendar-event"></i></div>
+      <div class="list-body">
+        <div class="list-title">{{ s.name }}</div>
+        <div class="list-meta">
+          {% if s.start_date %}<span>{{ s.start_date }}</span>{% endif %}
+          {% if s.end_date %}<span>→ {{ s.end_date }}</span>{% endif %}
+          <span>{{ s.requests.count() }} requests</span>
+        </div>
+      </div>
+      {% if s.is_active %}<span class="pill pill-success">Active</span>{% else %}<span class="pill pill-neutral">Inactive</span>{% endif %}
+    </div>
+  {% endfor %}
+</div>
+{% endblock %}

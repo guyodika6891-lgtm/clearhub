@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard{% endblock %}
+{% block page_title %}Admin Panel{% endblock %}
+{% block page_sub %}Platform overview{% endblock %}
+
+{% block content %}
+<div class="stat-grid">
+  <div class="stat-tile fade-up" style="--tile-color:#2563eb;--tile-color-2:#7c3aed;">
+    <div class="tile-top"><div class="tile-icon"><i class="bi bi-people-fill"></i></div></div>
+    <div class="tile-value">{{ stats.users }}</div>
+    <div class="tile-label">Total Users</div>
+  </div>
+  <div class="stat-tile fade-up-1" style="--tile-color:#10b981;--tile-color-2:#059669;">
+    <div class="tile-top"><div class="tile-icon"><i class="bi bi-mortarboard-fill"></i></div></div>
+    <div class="tile-value">{{ stats.students }}</div>
+    <div class="tile-label">Students</div>
+  </div>
+  <div class="stat-tile fade-up-2" style="--tile-color:#f59e0b;--tile-color-2:#d97706;">
+    <div class="tile-top"><div class="tile-icon"><i class="bi bi-person-badge-fill"></i></div></div>
+    <div class="tile-value">{{ stats.staff }}</div>
+    <div class="tile-label">Staff</div>
+  </div>
+  <div class="stat-tile fade-up-3" style="--tile-color:#8b5cf6;--tile-color-2:#7c3aed;">
+    <div class="tile-top"><div class="tile-icon"><i class="bi bi-building"></i></div></div>
+    <div class="tile-value">{{ stats.departments }}</div>
+    <div class="tile-label">Departments</div>
+  </div>
+  <div class="stat-tile fade-up-3" style="--tile-color:#f59e0b;--tile-color-2:#d97706;">
+    <div class="tile-top"><div class="tile-icon"><i class="bi bi-hourglass-split"></i></div></div>
+    <div class="tile-value">{{ stats.requests_pending }}</div>
+    <div class="tile-label">Pending</div>
+  </div>
+  <div class="stat-tile fade-up-3" style="--tile-color:#10b981;--tile-color-2:#059669;">
+    <div class="tile-top"><div class="tile-icon"><i class="bi bi-check-circle-fill"></i></div></div>
+    <div class="tile-value">{{ stats.requests_completed }}</div>
+    <div class="tile-label">Completed</div>
+  </div>
+</div>
+
+<div class="row g-4 mt-2">
+  <div class="col-lg-6">
+    <div class="p-card h-100">
+      <div class="p-card-header"><div><h6 class="p-card-title">Department Load</h6><p class="p-card-subtitle">Pending per department</p></div></div>
+      {% for item in dept_load %}
+        <div class="list-row">
+          <div class="list-thumb" style="background:linear-gradient(135deg,#2563eb,#7c3aed);">{{ item.dept.code }}</div>
+          <div class="list-body">
+            <div class="list-title">{{ item.dept.name }}</div>
+            <div class="list-meta">
+              <span>{{ item.pending }} pending</span>
+              <span>{{ item.approved }} approved</span>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="col-lg-6">
+    <div class="p-card h-100">
+      <div class="p-card-header"><div><h6 class="p-card-title">Recent Requests</h6><p class="p-card-subtitle">Latest submissions</p></div></div>
+      {% for r in recent_requests %}
+        <a href="{{ url_for('clearance_detail', ref=r.reference) }}" class="list-row">
+          <div class="list-thumb" style="background:linear-gradient(135deg,#f59e0b,#d97706);">{{ r.student.username[0]|upper }}</div>
+          <div class="list-body">
+            <div class="list-title">{{ r.student.full_name or r.student.username }}</div>
+            <div class="list-meta"><span>{{ r.reference }}</span><span>{{ r.created_at|time_ago }}</span></div>
+          </div>
+          <span class="pill {% if r.status == 'completed' %}pill-success{% else %}pill-brand{% endif %}">{{ r.status|title }}</span>
+        </a>
+      {% else %}
+        <p class="text-muted small">No requests yet.</p>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% if recent_audit %}
+  <div class="section-hd mt-4"><h5><i class="bi bi-shield-lock text-primary"></i> Recent Audit Log</h5></div>
+  <div class="p-card" style="padding:0; overflow:hidden;">
+    <table class="p-table">
+      <thead><tr><th>Action</th><th>Details</th><th>IP</th><th>When</th></tr></thead>
+      <tbody>
+        {% for log in recent_audit %}
+          <tr>
+            <td><span class="pill pill-neutral">{{ log.action }}</span></td>
+            <td class="small text-muted">{{ log.details[:60] if log.details else '—' }}</td>
+            <td class="small text-muted">{{ log.ip_address or '—' }}</td>
+            <td class="small text-muted">{{ log.created_at|time_ago }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endif %}
+{% endblock %}

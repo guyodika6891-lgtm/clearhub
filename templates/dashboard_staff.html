@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}Staff Dashboard{% endblock %}
+{% block page_title %}Staff Dashboard{% endblock %}
+{% block page_sub %}{{ dept.name if dept else 'No department assigned' }}{% endblock %}
+
+{% block content %}
+{% if not dept %}
+  <div class="alert alert-warning"><i class="bi bi-exclamation-triangle"></i> You are not assigned to a department yet. Contact the admin.</div>
+{% else %}
+<div class="stat-grid">
+  <div class="stat-tile fade-up" style="--tile-color:#f59e0b;--tile-color-2:#d97706;">
+    <div class="tile-top"><div class="tile-icon"><i class="bi bi-inbox"></i></div></div>
+    <div class="tile-value">{{ pending_steps|length }}</div>
+    <div class="tile-label">Pending Reviews</div>
+  </div>
+  <div class="stat-tile fade-up-1" style="--tile-color:#10b981;--tile-color-2:#059669;">
+    <div class="tile-top"><div class="tile-icon"><i class="bi bi-check-circle-fill"></i></div></div>
+    <div class="tile-value">{{ dept.approved_count }}</div>
+    <div class="tile-label">Approved by You</div>
+  </div>
+  <div class="stat-tile fade-up-2" style="--tile-color:#ef4444;--tile-color-2:#dc2626;">
+    <div class="tile-top"><div class="tile-icon"><i class="bi bi-x-circle-fill"></i></div></div>
+    <div class="tile-value">{{ dept.rejected_count }}</div>
+    <div class="tile-label">Rejected</div>
+  </div>
+  <div class="stat-tile fade-up-3" style="--tile-color:#2563eb;--tile-color-2:#7c3aed;">
+    <div class="tile-top"><div class="tile-icon"><i class="bi bi-building"></i></div></div>
+    <div class="tile-value" style="font-size:1.2rem;">{{ dept.code }}</div>
+    <div class="tile-label">Department</div>
+  </div>
+</div>
+
+<div class="section-hd"><h5><i class="bi bi-inbox text-warning"></i> Pending Reviews ({{ pending_steps|length }})</h5></div>
+{% if pending_steps %}
+  {% for step in pending_steps %}
+    <div class="list-row">
+      <div class="list-thumb" style="background: linear-gradient(135deg,#f59e0b,#d97706);"><i class="bi bi-hourglass-split"></i></div>
+      <div class="list-body">
+        <div class="list-title">{{ step.request.student.full_name or step.request.student.username }}</div>
+        <div class="list-meta">
+          <span><i class="bi bi-hash"></i> {{ step.request.reference }}</span>
+          <span>{{ step.request.semester.name }}</span>
+          <span>{{ step.request.created_at|time_ago }}</span>
+        </div>
+      </div>
+      <a href="{{ url_for('staff_step_review', step_id=step.id) }}" class="btn btn-primary btn-sm">
+        <i class="bi bi-eye"></i> Review
+      </a>
+    </div>
+  {% endfor %}
+{% else %}
+  <div class="empty-state">
+    <div class="empty-icon"><i class="bi bi-check2-circle"></i></div>
+    <h5>All caught up!</h5>
+    <p>No pending reviews right now.</p>
+  </div>
+{% endif %}
+
+{% if recent_reviews %}
+  <div class="section-hd mt-4"><h5><i class="bi bi-clock-history text-primary"></i> Your Recent Reviews</h5></div>
+  {% for step in recent_reviews %}
+    <div class="list-row">
+      <div class="list-thumb"
+           style="{% if step.status == 'approved' %}background:linear-gradient(135deg,#10b981,#059669);
+                  {% else %}background:linear-gradient(135deg,#ef4444,#dc2626);{% endif %}">
+        {% if step.status == 'approved' %}<i class="bi bi-check-lg"></i>{% else %}<i class="bi bi-x-lg"></i>{% endif %}
+      </div>
+      <div class="list-body">
+        <div class="list-title">{{ step.request.student.full_name or step.request.student.username }}</div>
+        <div class="list-meta"><span>{{ step.request.reference }}</span><span>{{ step.reviewed_at|time_ago }}</span></div>
+      </div>
+      <span class="pill {% if step.status == 'approved' %}pill-success{% else %}pill-danger{% endif %}">{{ step.status|title }}</span>
+    </div>
+  {% endfor %}
+{% endif %}
+{% endif %}
+{% endblock %}
