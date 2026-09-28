@@ -33,7 +33,7 @@ A modern, AI-powered clearance workflow platform for universities. Students appl
 ## 🖥️ Run Locally
 
 ```bash
-git clone https://github.com/guyodika6891-lgtm/clearhub.git
+git clone https://github.com/<guyodika6891-lgtm>/clearhub.git
 cd clearhub
 python -m venv .venv
 .venv\Scripts\activate           # Windows
