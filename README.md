@@ -49,7 +49,7 @@ Open **http://127.0.0.1:5000** — first registered user becomes **admin** 👑.
 ## 🌐 Deploy to Render
 
 1. Push code to GitHub ✅ (you're here)
-2. Go to [render.com](https://render.com) → **New → Blueprint**
+2. Go to [render.com](https://clearhub-8w1o.onrender.com) → **New → Blueprint**
 3. Select your `clearhub` repo
 4. Render reads `render.yaml` → click **Apply**
 5. Wait ~4 minutes → done 🚀
